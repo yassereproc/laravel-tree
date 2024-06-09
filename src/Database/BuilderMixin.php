@@ -9,6 +9,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Nevadskiy\Tree\ValueObjects\Path;
 use RuntimeException;
+use Illuminate\Database\SQLiteConnection;
 
 /**
  * @mixin Builder
@@ -40,6 +41,10 @@ class BuilderMixin
             }
 
             if ($this->getConnection() instanceof MySqlConnection) {
+                return $this->whereIn($column, $path->getAncestorSet(), $boolean);
+            }
+
+            if ($this->getConnection() instanceof SQLiteConnection) {
                 return $this->whereIn($column, $path->getAncestorSet(), $boolean);
             }
 
