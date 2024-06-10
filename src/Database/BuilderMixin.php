@@ -64,7 +64,7 @@ class BuilderMixin
                 return $this->where($column, BuilderMixin::ANCESTOR, $path, $boolean);
             }
 
-            if ($this->getConnection() instanceof MySqlConnection) {
+            if ($this->getConnection() instanceof MySqlConnection || $this->getConnection() instanceof SQLiteConnection) {
                 return $this->whereIn($column, $path->getPathSet(), $boolean);
             }
 
@@ -84,7 +84,7 @@ class BuilderMixin
                 return $this->whereColumn($first, BuilderMixin::ANCESTOR, $second, $boolean);
             }
 
-            if ($this->getConnection() instanceof MySqlConnection) {
+            if ($this->getConnection() instanceof MySqlConnection || $this->getConnection() instanceof SQLiteConnection) {
                 return $this->whereRaw(sprintf('find_in_set(%s, path_to_ancestor_set(%s))', $first, $second), [], $boolean);
             }
 
@@ -141,7 +141,7 @@ class BuilderMixin
                 return $this->where($column, BuilderMixin::DESCENDANT, $path, $boolean);
             }
 
-            if ($this->getConnection() instanceof MySqlConnection) {
+            if ($this->getConnection() instanceof MySqlConnection || $this->getConnection() instanceof SQLiteConnection) {
                 return $this->whereNested(function (Builder $query) use ($column, $path) {
                     $query->where($column, '=', $path);
                     $query->orWhereDescendant($column, $path);
@@ -164,7 +164,7 @@ class BuilderMixin
                 return $this->where($column, '~', "{$path}.*", $boolean);
             }
 
-            if ($this->getConnection() instanceof MySqlConnection) {
+            if ($this->getConnection() instanceof MySqlConnection || $this->getConnection() instanceof SQLiteConnection) {
                 return $this->where($column, 'like', "{$path}.%", $boolean);
             }
 
@@ -194,7 +194,7 @@ class BuilderMixin
                 return $this->whereColumn($first, BuilderMixin::DESCENDANT, $second, $boolean);
             }
 
-            if ($this->getConnection() instanceof MySqlConnection) {
+            if ($this->getConnection() instanceof MySqlConnection || $this->getConnection() instanceof SQLiteConnection) {
                 return $this->whereColumn($first, 'like', new Expression("concat({$second}, '%')"), $boolean);
             }
 
@@ -251,7 +251,7 @@ class BuilderMixin
                 return $this->where($this->compilePgsqlDepth($column), $operator, $depth);
             }
 
-            if ($this->getConnection() instanceof MySqlConnection) {
+            if ($this->getConnection() instanceof MySqlConnection || $this->getConnection() instanceof SQLiteConnection) {
                 return $this->where($this->compileMysqlDepth($column), $operator, $depth);
             }
 
@@ -320,7 +320,7 @@ class BuilderMixin
                 ]);
             }
 
-            if ($this->getConnection() instanceof MySqlConnection) {
+            if ($this->getConnection() instanceof MySqlConnection || $this->getConnection() instanceof SQLiteConnection) {
                 return $this->update([
                     $column => is_null($parentPath)
                         ? new Expression($this->compileMysqlSubPath($column, $path->getDepth()))
